@@ -5,7 +5,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import io
-import time # Otomatik yenileme için eklendi
+import time 
 
 # --- SAYFA AYARLARI ---
 st.set_page_config(page_title="Doktora Süreç Takip", layout="wide")
@@ -42,16 +42,13 @@ with col_cikis:
 
 # --- 1. EXCEL'İ OKUMA ---
 try:
-    # Veriyi ham haliyle okuyoruz
     raw_df = pd.read_excel("ogrenciler.xlsx", engine="openpyxl")
 except FileNotFoundError:
-    # Eğer dosya yoksa boş bir şablon oluştur
     st.warning("Sistemde 'ogrenciler.xlsx' bulunamadı. Lütfen 'Veri Girişi' sekmesinden dosyanızı yükleyin.")
     raw_df = pd.DataFrame()
 
 # --- SEKMELERİ (TABS) OLUŞTURMA ---
 tab1, tab2 = st.tabs(["📊 Süreç Takip Paneli", "✍️ Veri Girişi ve Yükleme"])
-
 
 # ==========================================
 # SEKME 2: VERİ GİRİŞİ, YÜKLEME VE DÜZENLEME
@@ -59,7 +56,6 @@ tab1, tab2 = st.tabs(["📊 Süreç Takip Paneli", "✍️ Veri Girişi ve Yükl
 with tab2:
     st.subheader("📝 Öğrenci Verilerini Yönet")
     
-    # --- YENİ ÖZELLİK: EXCEL YÜKLEME ALANI ---
     with st.expander("📂 Bilgisayardan Güncel Excel Dosyası Yükle", expanded=False):
         st.info("Elinizde önceden güncellediğiniz veya GitHub'dan indirdiğiniz bir Excel dosyası varsa, sisteme buradan yükleyebilirsiniz. Yükleme sonrası tüm veriler bu dosyadakilerle güncellenir.")
         yuklenen_dosya = st.file_uploader("Lütfen .xlsx uzantılı dosyanızı seçin", type=["xlsx"])
@@ -67,12 +63,11 @@ with tab2:
         if yuklenen_dosya is not None:
             if st.button("📤 Yüklenen Dosyayı Sisteme Aktar", type="primary"):
                 try:
-                    # Yüklenen dosyayı oku ve sisteme kaydet
                     yeni_df = pd.read_excel(yuklenen_dosya, engine="openpyxl")
                     yeni_df.to_excel("ogrenciler.xlsx", index=False)
                     st.success("✅ Dosya başarıyla yüklendi! Sistem güncelleniyor...")
-                    time.sleep(1.5) # Kullanıcının mesajı görmesi için 1.5 saniye bekle
-                    st.rerun() # Sayfayı otomatik yenile
+                    time.sleep(1.5)
+                    st.rerun() 
                 except Exception as e:
                     st.error(f"❌ Dosya yüklenirken bir hata oluştu: {e}")
                     
@@ -80,7 +75,6 @@ with tab2:
     
     st.info("💡 **Tablo Üzerinde Düzenleme:** Tablodaki herhangi bir hücreye çift tıklayarak değiştirebilir, en alta yeni satır ekleyebilir veya satır silebilirsiniz. Tarihleri **Gün.Ay.Yıl** formatında girin.")
     
-    # Excel gibi çalışan veri düzenleyici
     if not raw_df.empty:
         edited_df = st.data_editor(raw_df, num_rows="dynamic", use_container_width=True, height=500)
         
@@ -102,8 +96,7 @@ with tab2:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
             
-        st.warning("⚠️ **ÖNEMLİ:** İşiniz bittiğinde mutlaka güncel Excel'i bilgisayarınıza indirmeyi (veya GitHub'a yüklemeyi) unutmayın. Bulut sunucular uyku moduna geçtiğinde sadece GitHub'daki ilk dosyayı hatırlar.")
-
+        st.warning("⚠️ **ÖNEMLİ:** İşiniz bittiğinde mutlaka güncel Excel'i bilgisayarınıza indirmeyi unutmayın.")
 
 # ==========================================
 # SEKME 1: SÜREÇ TAKİP PANELİ (ANA EKRAN)
@@ -211,8 +204,8 @@ with tab1:
                         eposta_listesine_ekle(row, row['Beklenen TİK Aşaması'], row['Tarih'], row['Kalan Gün'])
                 else:
                     st.success("Yaklaşan yok.")
-        else:
-            st.success("TİK bekleyen yok.")
+            else:
+                st.success("TİK bekleyen yok.")
 
         st.markdown("---")
         st.subheader("✉️ Danışmanlara ve Öğrencilere E-Posta Gönder")
